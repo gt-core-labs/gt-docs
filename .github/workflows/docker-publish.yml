@@ -1,0 +1,68 @@
+# Build + push the gt-docs image to DockerHub — GATED on CI passing.
+#
+# Triggered by the CI workflow completing (workflow_run). The job only runs when
+# that CI run both succeeded AND was the push to main, so a red build blocks the
+# image.
+#
+# Publishes codecsrayo/gt-docs:
+#   - :latest         moving tag, what gt-app-proxy pulls
+#   - :sha-<7>        immutable per-commit tag for rollback / pinning
+#
+# Requires two repo secrets (Settings -> Secrets and variables -> Actions):
+#   DOCKERHUB_USERNAME                      e.g. codecsrayo
+#   DCKR_PAT_EKN6JEIUPNVMDCQH2OED9Z4FZKU    a DockerHub PAT with Read & Write scope
+name: docker-publish
+
+on:
+  workflow_run:
+    workflows: [CI]
+    types: [completed]
+  workflow_dispatch: {}
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    if: >-
+      github.event_name == 'workflow_dispatch' ||
+      (github.event.workflow_run.conclusion == 'success' &&
+       github.event.workflow_run.event == 'push' &&
+       github.event.workflow_run.head_branch == 'main')
+    steps:
+      # Check out the exact commit CI validated, not the current tip of main.
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.workflow_run.head_sha || github.sha }}
+
+      - name: Resolve commit SHA
+        id: vars
+        env:
+          SHA: ${{ github.event.workflow_run.head_sha || github.sha }}
+        run: echo "sha7=${SHA:0:7}" >> "$GITHUB_OUTPUT"
+
+      - uses: docker/setup-buildx-action@v3
+
+      - name: Log in to DockerHub
+        uses: docker/login-action@v3
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DCKR_PAT_EKN6JEIUPNVMDCQH2OED9Z4FZKU }}
+
+      - name: Docker metadata
+        id: meta
+        uses: docker/metadata-action@v5
+        with:
+          images: codecsrayo/gt-docs
+          tags: |
+            type=raw,value=latest
+            type=raw,value=sha-${{ steps.vars.outputs.sha7 }}
+
+      - name: Build and push
+        uses: docker/build-push-action@v6
+        with:
+          context: .
+          file: Dockerfile
+          push: true
+          tags: ${{ steps.meta.outputs.tags }}
+          labels: ${{ steps.meta.outputs.labels }}
+          cache-from: type=gha
+          cache-to: type=gha,mode=max

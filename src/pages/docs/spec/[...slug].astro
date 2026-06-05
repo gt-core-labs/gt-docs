@@ -1,0 +1,41 @@
+---
+import { getCollection, render } from 'astro:content';
+import Base from '../../../layouts/Base.astro';
+import { resolveUser } from '../../../lib/server/session';
+
+const cookie = Astro.request.headers.get('cookie');
+const user = await resolveUser(cookie);
+
+const { slug } = Astro.params;
+const specs = await getCollection('docs');
+const entry = specs.find((s) => s.id === slug);
+if (!entry) return new Response('Not found', { status: 404 });
+
+const ordered = specs.sort((a, b) => (a.data.order ?? 100) - (b.data.order ?? 100));
+const { Content } = await render(entry);
+---
+
+<Base title={`${entry.data.title} — gt-docs`} user={user}>
+  <div class="layout">
+    <aside class="sidebar">
+      <h3>Specs</h3>
+      <ul>
+        {ordered.map((s) => (
+          <li>
+            <a href={`/docs/spec/${s.id}`} class={s.id === entry.id ? 'active' : ''}>
+              {s.data.title}
+            </a>
+          </li>
+        ))}
+      </ul>
+      <h3>Workspace</h3>
+      <ul>
+        <li><a href="/docs">All documents</a></li>
+      </ul>
+    </aside>
+
+    <main class="content prose">
+      <Content />
+    </main>
+  </div>
+</Base>

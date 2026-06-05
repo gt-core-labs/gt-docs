@@ -1,0 +1,42 @@
+---
+import Base from '../../layouts/Base.astro';
+import { resolveUser } from '../../lib/server/session';
+import { getDocument } from '../../lib/server/documents';
+import { renderMarkdown } from '../../lib/markdown';
+
+const cookie = Astro.request.headers.get('cookie');
+const user = await resolveUser(cookie);
+
+// A single workspace document is scope-guarded: no session ⇒ send to login.
+if (!user) {
+  return Astro.redirect(`/login?next=${encodeURIComponent(Astro.url.pathname)}`, 302);
+}
+
+const { id } = Astro.params;
+const doc = await getDocument(cookie, id!);
+if (!doc) return new Response('Not found', { status: 404 });
+
+const html = renderMarkdown(doc.body_md);
+---
+
+<Base title={`${doc.filename || doc.id} — gt-docs`} user={user}>
+  <div class="layout">
+    <aside class="sidebar">
+      <h3>Workspace</h3>
+      <ul>
+        <li><a href="/docs">← All documents</a></li>
+      </ul>
+    </aside>
+    <main class="content prose">
+      <h1>{doc.filename || doc.id}</h1>
+      <p class="meta">{doc.owner_type}/{doc.owner_id} · {doc.kind} · v{doc.version}</p>
+      {doc.body_md ? (
+        <article set:html={html} />
+      ) : doc.extracted_text ? (
+        <pre>{doc.extracted_text}</pre>
+      ) : (
+        <p class="notice">This document has no renderable text content.</p>
+      )}
+    </main>
+  </div>
+</Base>

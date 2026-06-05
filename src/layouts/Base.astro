@@ -1,0 +1,36 @@
+---
+import '../styles/global.css';
+
+interface Props {
+  title?: string;
+  /** When false (the public /share viewer), the app chrome/nav is hidden. */
+  chrome?: boolean;
+  user?: { email?: string } | null;
+}
+const { title = 'gt-docs', chrome = true, user = null } = Astro.props;
+---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{title}</title>
+  </head>
+  <body>
+    {chrome && (
+      <header class="site-header">
+        <span class="brand">gt-docs</span>
+        <nav>
+          <a href="/docs">Docs</a>
+          <a href="/">Console</a>
+        </nav>
+        <span class="spacer"></span>
+        <span class="session">
+          {user?.email ? user.email : <a href="/login">Sign in</a>}
+        </span>
+      </header>
+    )}
+    <slot />
+  </body>
+</html>

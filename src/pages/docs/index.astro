@@ -1,0 +1,134 @@
+---
+import { getCollection } from 'astro:content';
+import Base from '../../layouts/Base.astro';
+import { resolveUser } from '../../lib/server/session';
+import {
+  listDocuments,
+  searchDocuments,
+  type DocumentRow,
+} from '../../lib/server/documents';
+
+const cookie = Astro.request.headers.get('cookie');
+const user = await resolveUser(cookie);
+
+// Static specs from git (always available).
+const specs = (await getCollection('docs')).sort(
+  (a, b) => (a.data.order ?? 100) - (b.data.order ?? 100),
+);
+
+const url = new URL(Astro.request.url);
+const query = url.searchParams.get('query')?.trim() ?? '';
+const offset = Math.max(0, Number(url.searchParams.get('offset') ?? 0) || 0);
+const limit = 25;
+
+// Dynamic workspace documents — only when there is a session; the backend
+// surface is scope-guarded, so an anonymous visitor just sees the specs.
+let docs: DocumentRow[] = [];
+let hasMore = false;
+let nextOffset: number | null = null;
+let backendReachable = true;
+
+if (user) {
+  if (query) {
+    const hits = await searchDocuments(cookie, query);
+    if (hits === null) backendReachable = false;
+    else docs = hits;
+  } else {
+    const page = await listDocuments(cookie, { offset, limit });
+    if (page === null) backendReachable = false;
+    else {
+      docs = page.documents;
+      hasMore = page.has_more;
+      nextOffset = page.next_offset;
+    }
+  }
+}
+
+function prevHref(): string {
+  const p = new URLSearchParams();
+  const o = Math.max(0, offset - limit);
+  if (o > 0) p.set('offset', String(o));
+  const qs = p.toString();
+  return qs ? `/docs?${qs}` : '/docs';
+}
+function nextHref(): string {
+  const p = new URLSearchParams();
+  if (nextOffset != null) p.set('offset', String(nextOffset));
+  return `/docs?${p.toString()}`;
+}
+---
+
+<Base title="Docs — gt-docs" user={user}>
+  <div class="layout">
+    <aside class="sidebar">
+      <h3>Specs</h3>
+      <ul>
+        {specs.map((s) => (
+          <li><a href={`/docs/spec/${s.id}`}>{s.data.title}</a></li>
+        ))}
+      </ul>
+      <h3>Workspace</h3>
+      <ul>
+        <li><a href="/docs" class="active">All documents</a></li>
+      </ul>
+    </aside>
+
+    <main class="content">
+      <h1>Documentation</h1>
+
+      {!user && (
+        <p class="notice">
+          Showing published specs. <a href="/login">Sign in</a> to browse and
+          search your workspace documents.
+        </p>
+      )}
+
+      {user && !backendReachable && (
+        <p class="notice">Workspace documents are temporarily unavailable.</p>
+      )}
+
+      {user && (
+        <form class="search-box" method="get" action="/docs">
+          <input
+            type="search"
+            name="query"
+            value={query}
+            placeholder="Search workspace documents…"
+            autocomplete="off"
+          />
+        </form>
+      )}
+
+      {query && user && (
+        <p class="meta">{docs.length} result{docs.length === 1 ? '' : 's'} for “{query}”</p>
+      )}
+
+      {user && docs.length > 0 && (
+        <ul class="doc-list">
+          {docs.map((d) => (
+            <li>
+              <a href={`/docs/${d.id}`}>{d.filename || d.id}</a>
+              <div class="meta">
+                {d.owner_type}/{d.owner_id} · {d.kind} · v{d.version}
+                {d.uploaded_at ? ` · ${new Date(d.uploaded_at).toLocaleString()}` : ''}
+              </div>
+            </li>
+          ))}
+        </ul>
+      )}
+
+      {user && docs.length === 0 && backendReachable && (
+        <p class="notice">
+          {query ? 'No documents matched your search.' : 'No workspace documents yet.'}
+        </p>
+      )}
+
+      {user && !query && (
+        <div class="pager">
+          {offset > 0 && <a href={prevHref()}>← Previous</a>}
+          {hasMore && <a href={nextHref()}>Next →</a>}
+        </div>
+      )}
+    </main>
+  </div>
+</Base>

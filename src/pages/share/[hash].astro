@@ -1,0 +1,43 @@
+---
+import Base from '../../layouts/Base.astro';
+import { readShare } from '../../lib/server/documents';
+import { renderMarkdown } from '../../lib/markdown';
+
+// PUBLIC viewer — no auth, no cookie forwarded. SSR reads the backend's
+// GET /share/{hash} JSON and renders the document, or a friendly unavailable
+// page for expired/revoked/unknown shares.
+const { hash } = Astro.params;
+const result = await readShare(hash!);
+
+// Match the backend's semantics in the HTTP status we return:
+//   expired → 410 Gone, not-found/revoked/unknown → 404.
+const status = result.kind === 'ok' ? 200 : result.kind === 'expired' ? 410 : 404;
+Astro.response.status = status;
+
+const html = result.kind === 'ok' ? renderMarkdown(result.data.document.body_md) : '';
+---
+
+<Base title="Shared document — gt-docs" chrome={false}>
+  {result.kind === 'ok' ? (
+    <div class="share-frame prose">
+      <div class="filename">{result.data.document.filename}</div>
+      {result.data.document.body_md ? (
+        <article set:html={html} />
+      ) : result.data.document.extracted_text ? (
+        <pre>{result.data.document.extracted_text}</pre>
+      ) : (
+        <p class="notice">This document has no renderable text content.</p>
+      )}
+    </div>
+  ) : result.kind === 'expired' ? (
+    <div class="empty-state">
+      <h1>Link expired</h1>
+      <p>This share link is no longer active. Ask the owner for a fresh link.</p>
+    </div>
+  ) : (
+    <div class="empty-state">
+      <h1>Not available</h1>
+      <p>This share link is invalid or has been revoked.</p>
+    </div>
+  )}
+</Base>
