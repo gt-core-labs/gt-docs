@@ -1,0 +1,13 @@
+{
+  "mcpServers": {
+    "gt": {
+      "headers": {
+        "Authorization": "Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiIsImtpZCI6Imd0LW1haW4ifQ.eyJzdWIiOiJndGRvY3MtZ3Rkb2NzLTNkYzgwNSIsIndvcmtzcGFjZSI6ImRlZmF1bHQiLCJzY29wZXMiOlsiYTJhLnJlYWQiLCJhMmEud3JpdGUiLCJpc3N1ZXMucmVhZCIsImlzc3Vlcy53cml0ZSIsIm1lbW9yeS5yZWFkIiwibWVtb3J5LndyaXRlIiwibWVyZ2Uud3JpdGUiXSwiZXhwIjoxNzgxNzg2ODMwLCJpYXQiOjE3ODE3ODMyMzB9.NuYd66gl5rOa0KAl8lHDaJbIdN-n38nf5iYzM_NmrP2SY4EHPU77jm5KeLjty_zd4AdfAroZqVy8r_OMpdTKeHDzZbQg1zndUfenW9kPglpQpvRlQ47P2Ut3V29HnQI_suAmuGO1B_1bIv6ecMagPrsc6XSDC1pHo3y8rma3OrkGTD_wXAcOuwYi3WrszNmZbeDEC8D4pbpDgSLOhbP8Q00SK18E9QYiBV1PFK7GjFg2yf2U_EVdRxneFEk_qiu1GsfXoVFTrMEwWOQOdhUxGVSIJoYr7CxiM1SPUB_0VdZWbUrS3_su-Jwx29PWUcvXYlrF7SA3xG3FTmXdCAtjZw",
+        "X-Rig": "gtdocs",
+        "X-Workspace": "default"
+      },
+      "type": "http",
+      "url": "http://gt-mcp-server:8765/mcp"
+    }
+  }
+}
