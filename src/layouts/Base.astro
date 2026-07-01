@@ -16,7 +16,8 @@ interface Props {
   locale?: Locale;
   /** When false (the public /share viewer), the app chrome/nav is hidden. */
   chrome?: boolean;
-  user?: { email?: string } | null;
+  /** The resolved session; `/auth/me` returns { sub, scopes, workspace } (no email). */
+  user?: { sub?: string; email?: string } | null;
 }
 const {
   title = 'gt docs',
@@ -55,10 +56,10 @@ const other = otherLocale(locale);
           <span class="cur">{locale.toUpperCase()}</span>
           <a href={switchLocalePath(path, other)}>{other.toUpperCase()}</a>
         </div>
-        {user?.email ? (
+        {user ? (
           <span class="session">
-            <span class="who">{user.email}</span>
-            <a class="btn btn-ghost" href="/app">{t.console}</a>
+            {(user.email ?? user.sub) && <span class="who">{user.email ?? user.sub}</span>}
+            <a class="btn btn-login" href="/app">{t.console}</a>
           </span>
         ) : (
           <a class="btn btn-login" href="/app/login">{t.login}</a>

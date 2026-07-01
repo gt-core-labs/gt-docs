@@ -8,7 +8,7 @@ interface Props {
   locale: Locale;
   /** Slug of the current page (e.g. `platform/overview`) to highlight. */
   activeSlug?: string;
-  user?: { email?: string } | null;
+  user?: { sub?: string; email?: string } | null;
 }
 const { title, locale, activeSlug, user = null } = Astro.props;
 const sections = await navFor(locale);
