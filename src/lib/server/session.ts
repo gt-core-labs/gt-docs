@@ -2,6 +2,8 @@ import { backendFetch } from './backend';
 
 /** The minimal session shape gt-docs needs (optional auth on /docs). */
 export interface SessionUser {
+  /** The authenticated principal — `/auth/me` returns this as `sub` (no `email` field). */
+  sub?: string;
   id?: string;
   email?: string;
   workspace?: string;
