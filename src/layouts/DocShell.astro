@@ -1,0 +1,47 @@
+---
+import Base from './Base.astro';
+import { type Locale, ui, categoryLabel, docHref } from '../lib/i18n';
+import { navFor } from '../lib/docs-nav';
+
+interface Props {
+  title: string;
+  locale: Locale;
+  /** Slug of the current page (e.g. `platform/overview`) to highlight. */
+  activeSlug?: string;
+  user?: { email?: string } | null;
+}
+const { title, locale, activeSlug, user = null } = Astro.props;
+const sections = await navFor(locale);
+const t = ui[locale];
+---
+
+<Base title={title} locale={locale} user={user}>
+  <div class="layout">
+    <aside class="sidebar">
+      {sections.map((section) => (
+        <>
+          <h3>{categoryLabel[locale][section.category]}</h3>
+          <ul>
+            {section.items.map((item) => (
+              <li>
+                <a
+                  href={docHref(locale, item.slug)}
+                  class={item.slug === activeSlug ? 'active' : ''}
+                >
+                  {item.title}
+                </a>
+              </li>
+            ))}
+          </ul>
+        </>
+      ))}
+      <h3>{t.workspaceDocs}</h3>
+      <ul>
+        <li><a href="/docs">{t.browseWorkspace}</a></li>
+      </ul>
+    </aside>
+    <main class="content prose">
+      <slot />
+    </main>
+  </div>
+</Base>

@@ -9,7 +9,7 @@ const user = await resolveUser(cookie);
 
 // A single workspace document is scope-guarded: no session ⇒ send to login.
 if (!user) {
-  return Astro.redirect(`/login?next=${encodeURIComponent(Astro.url.pathname)}`, 302);
+  return Astro.redirect(`/app/login?next=${encodeURIComponent(Astro.url.pathname)}`, 302);
 }
 
 const { id } = Astro.params;

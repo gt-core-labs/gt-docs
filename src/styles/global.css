@@ -33,9 +33,66 @@ a:hover { text-decoration: underline; }
   background: var(--panel);
 }
 .site-header .brand { font-weight: 700; font-size: 1.05rem; color: var(--text); }
-.site-header nav { display: flex; gap: 1rem; }
+.site-header nav { display: flex; gap: 1rem; flex-wrap: wrap; }
+.site-header nav a { color: var(--muted); }
+.site-header nav a:hover { color: var(--text); text-decoration: none; }
 .site-header .spacer { flex: 1; }
-.site-header .session { color: var(--muted); font-size: 0.875rem; }
+.site-header .session { display: inline-flex; align-items: center; gap: 0.6rem; color: var(--muted); font-size: 0.85rem; }
+.site-header .session .who { max-width: 16ch; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+
+/* Language switcher */
+.lang-switch { display: inline-flex; align-items: center; gap: 0.25rem; font-size: 0.8rem; }
+.lang-switch .cur { color: var(--text); font-weight: 600; }
+.lang-switch a { color: var(--muted); }
+
+/* Buttons */
+.btn {
+  display: inline-flex; align-items: center;
+  padding: 0.4rem 0.85rem;
+  border-radius: 8px;
+  font-size: 0.85rem; font-weight: 600;
+  border: 1px solid transparent;
+  white-space: nowrap;
+}
+.btn:hover { text-decoration: none; }
+.btn-login { background: var(--accent-dim); color: #fff; }
+.btn-login:hover { background: var(--accent); }
+.btn-ghost { border-color: var(--border); color: var(--text); background: var(--bg); }
+.btn-ghost:hover { border-color: var(--accent); }
+
+/* Landing */
+.hero {
+  text-align: center;
+  padding: 4rem 1.5rem 2.5rem;
+  border-bottom: 1px solid var(--border);
+}
+.hero h1 { font-size: 2.6rem; margin: 0 0 0.5rem; }
+.hero .lede { color: var(--muted); font-size: 1.15rem; margin: 0 auto 1.75rem; max-width: 44ch; }
+.cards-wrap { max-width: 1000px; margin: 0 auto; padding: 2rem 1.5rem 4rem; }
+.card-group { margin-bottom: 2.5rem; }
+.card-group h2 { font-size: 1.3rem; margin: 0 0 1rem; }
+.cards { display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: 0.85rem; }
+.card {
+  display: flex; flex-direction: column; gap: 0.35rem;
+  border: 1px solid var(--border); border-radius: 10px;
+  padding: 0.9rem 1rem; background: var(--panel);
+  color: var(--text);
+}
+.card:hover { border-color: var(--accent); text-decoration: none; }
+.card .card-title { font-weight: 600; }
+.card .card-summary { color: var(--muted); font-size: 0.85rem; line-height: 1.45; }
+
+/* Mermaid diagrams */
+pre.mermaid {
+  background: transparent;
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 1rem;
+  margin: 1.5rem 0;
+  text-align: center;
+  overflow-x: auto;
+}
+pre.mermaid svg { max-width: 100%; height: auto; }
 
 .layout {
   display: grid;

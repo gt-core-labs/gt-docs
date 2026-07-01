@@ -1,14 +1,18 @@
 import { defineCollection, z } from 'astro:content';
 import { glob } from 'astro/loaders';
 
-// Static documentation specs versioned in git. Markdown files under
-// src/content/docs/ are picked up at build time and rendered at /docs/spec/<slug>.
+// Atomic documentation, versioned in git under src/content/docs/<locale>/<category>/<slug>.md.
+// One concept per file. Built at request time (SSR) and served at `/` (en) and
+// `/es/…`. The entry `id` is the path without extension, e.g. `en/platform/overview`.
 const docs = defineCollection({
   loader: glob({ pattern: '**/*.md', base: './src/content/docs' }),
   schema: z.object({
     title: z.string(),
-    order: z.number().default(100),
     summary: z.string().optional(),
+    /** Section this page belongs to (drives the sidebar grouping). */
+    category: z.enum(['platform', 'infrastructure']),
+    /** Sort order within the section. */
+    order: z.number().default(100),
   }),
 });
 

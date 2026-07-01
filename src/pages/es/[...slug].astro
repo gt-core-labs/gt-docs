@@ -1,0 +1,17 @@
+---
+import { render } from 'astro:content';
+import DocShell from '../../layouts/DocShell.astro';
+import { resolveUser } from '../../lib/server/session';
+import { findDoc } from '../../lib/docs-nav';
+
+const slug = Astro.params.slug ?? '';
+const entry = await findDoc('es', slug);
+if (!entry) return new Response('Not found', { status: 404 });
+
+const user = await resolveUser(Astro.request.headers.get('cookie'));
+const { Content } = await render(entry);
+---
+
+<DocShell title={`${entry.data.title} — gt docs`} locale="es" activeSlug={slug} user={user}>
+  <Content />
+</DocShell>
