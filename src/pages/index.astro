@@ -1,5 +1,8 @@
 ---
-// gt-docs only owns /docs and /share. A bare hit on this app's root sends the
-// user to the docs home.
-return Astro.redirect('/docs', 302);
+import Landing from '../components/Landing.astro';
+import { resolveUser } from '../lib/server/session';
+
+const user = await resolveUser(Astro.request.headers.get('cookie'));
 ---
+
+<Landing locale="en" user={user} />

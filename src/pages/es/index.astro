@@ -1,0 +1,8 @@
+---
+import Landing from '../../components/Landing.astro';
+import { resolveUser } from '../../lib/server/session';
+
+const user = await resolveUser(Astro.request.headers.get('cookie'));
+---
+
+<Landing locale="es" user={user} />

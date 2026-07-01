@@ -1,36 +1,90 @@
 ---
 import '../styles/global.css';
+import {
+  type Locale,
+  DEFAULT_LOCALE,
+  ui,
+  categoryLabel,
+  homeHref,
+  docHref,
+  otherLocale,
+  switchLocalePath,
+} from '../lib/i18n';
 
 interface Props {
   title?: string;
+  locale?: Locale;
   /** When false (the public /share viewer), the app chrome/nav is hidden. */
   chrome?: boolean;
   user?: { email?: string } | null;
 }
-const { title = 'gt-docs', chrome = true, user = null } = Astro.props;
+const {
+  title = 'gt docs',
+  locale = DEFAULT_LOCALE,
+  chrome = true,
+  user = null,
+} = Astro.props;
+
+const t = ui[locale];
+const path = Astro.url.pathname;
+const other = otherLocale(locale);
 ---
 
 <!doctype html>
-<html lang="en">
+<html lang={locale}>
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>{title}</title>
+    <meta name="description" content={t.tagline} />
   </head>
   <body>
     {chrome && (
       <header class="site-header">
-        <span class="brand">gt-docs</span>
+        <a class="brand" href={homeHref(locale)}>{t.brand}</a>
         <nav>
-          <a href="/docs">Docs</a>
-          <a href="/">Console</a>
+          <a href={homeHref(locale)}>{t.home}</a>
+          <a href={docHref(locale, 'platform/overview')}>{categoryLabel[locale].platform}</a>
+          <a href={docHref(locale, 'infrastructure/cluster-topology')}>
+            {categoryLabel[locale].infrastructure}
+          </a>
+          <a href="/docs">{t.workspaceDocs}</a>
         </nav>
         <span class="spacer"></span>
-        <span class="session">
-          {user?.email ? user.email : <a href="/login">Sign in</a>}
-        </span>
+        <div class="lang-switch" aria-label="language">
+          <span class="cur">{locale.toUpperCase()}</span>
+          <a href={switchLocalePath(path, other)}>{other.toUpperCase()}</a>
+        </div>
+        {user?.email ? (
+          <span class="session">
+            <span class="who">{user.email}</span>
+            <a class="btn btn-ghost" href="/app">{t.console}</a>
+          </span>
+        ) : (
+          <a class="btn btn-login" href="/app/login">{t.login}</a>
+        )}
       </header>
     )}
     <slot />
+
+    {/* Client-side mermaid: render every <pre class="mermaid"> block. */}
+    <script>
+      import mermaid from 'mermaid';
+      mermaid.initialize({
+        startOnLoad: false,
+        theme: 'dark',
+        securityLevel: 'strict',
+        themeVariables: {
+          fontFamily: 'ui-sans-serif, system-ui, -apple-system, sans-serif',
+          background: '#0d1117',
+          primaryColor: '#161b22',
+          primaryBorderColor: '#30363d',
+          primaryTextColor: '#e6edf3',
+          lineColor: '#8b949e',
+        },
+      });
+      const nodes = document.querySelectorAll('pre.mermaid');
+      if (nodes.length) mermaid.run({ nodes: Array.from(nodes) as HTMLElement[] });
+    </script>
   </body>
 </html>

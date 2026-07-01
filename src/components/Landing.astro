@@ -1,0 +1,38 @@
+---
+import Base from '../layouts/Base.astro';
+import { type Locale, ui, categoryLabel, docHref } from '../lib/i18n';
+import { navFor } from '../lib/docs-nav';
+
+interface Props {
+  locale: Locale;
+  user?: { email?: string } | null;
+}
+const { locale, user = null } = Astro.props;
+const sections = await navFor(locale);
+const t = ui[locale];
+const firstSlug = sections[0]?.items[0]?.slug ?? 'platform/overview';
+---
+
+<Base title={`${t.brand} — ${t.tagline}`} locale={locale} user={user}>
+  <section class="hero">
+    <h1>{t.brand}</h1>
+    <p class="lede">{t.tagline}</p>
+    <a class="btn btn-login" href={docHref(locale, firstSlug)}>{t.startHere} →</a>
+  </section>
+
+  <div class="cards-wrap">
+    {sections.map((section) => (
+      <section class="card-group">
+        <h2>{categoryLabel[locale][section.category]}</h2>
+        <div class="cards">
+          {section.items.map((item) => (
+            <a class="card" href={docHref(locale, item.slug)}>
+              <span class="card-title">{item.title}</span>
+              {item.summary && <span class="card-summary">{item.summary}</span>}
+            </a>
+          ))}
+        </div>
+      </section>
+    ))}
+  </div>
+</Base>
