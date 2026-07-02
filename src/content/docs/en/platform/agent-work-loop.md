@@ -102,11 +102,14 @@ reconciled against git truth.
 
 ## Open beads closing these gaps
 
-`gtcore-088db9` (refinery board reconcile at boot — G5a), `gtcore-b69087`
-(daemon restart / spawn materialization — G1/G6 adjacent), `gtcore-efb7e6`
-(daemon heartbeats — G6), plus the reopened `gtcore-4ad682` (merge_reset —
-G5b) and new beads for the mayor delegation edge (G1) and the ahead=0
-false-completion guard (G5c).
+Epic `gtcore-9d8e6b` tracks the audit's new bugs: `gtcore-d24661` (mayor
+delegation edge — G1, PR #164), `gtcore-03be6a` (ahead=0 evidence gate —
+G5c, PR #165) and `gtcore-f527f6` (cap-parked sling retry — G2, PR #166).
+Already tracked elsewhere: `gtcore-088db9` (refinery board reconcile at boot
+— G5a), `gtcore-b69087` (daemon restart — G1/G6 adjacent), `gtcore-efb7e6`
+(daemon heartbeats — G6), `gtcore-f396dc` (sling-prompt dialogs — G3),
+`gtcore-945c70` (credential guard — G4), plus the reopened `gtcore-4ad682`
+(merge_reset — G5b).
 
 > **Improvement areas.** The deepest issue is that failure is *silent* at
 > every broken edge: a spawn that materializes nothing, a skipped re-sling, a
