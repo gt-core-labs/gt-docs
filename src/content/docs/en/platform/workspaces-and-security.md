@@ -1,7 +1,7 @@
 ---
 title: Workspaces & security
 category: platform
-order: 10
+order: 11
 summary: Tenancy model and granular, security-governed RBAC.
 ---
 

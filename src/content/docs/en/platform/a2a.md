@@ -1,7 +1,7 @@
 ---
 title: Agent-to-agent (A2A)
 category: platform
-order: 9
+order: 10
 summary: How agents discover, delegate to, and message each other.
 ---
 
