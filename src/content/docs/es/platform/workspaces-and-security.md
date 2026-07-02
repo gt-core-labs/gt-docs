@@ -1,7 +1,7 @@
 ---
 title: Workspaces y seguridad
 category: platform
-order: 10
+order: 11
 summary: Modelo de tenencia y RBAC granular gobernado por seguridad.
 ---
 

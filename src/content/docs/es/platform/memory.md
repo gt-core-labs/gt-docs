@@ -1,7 +1,7 @@
 ---
 title: Memoria
 category: platform
-order: 7
+order: 8
 summary: Conocimiento durable que los agentes recuerdan y guardan — kinds, recall e higiene.
 ---
 

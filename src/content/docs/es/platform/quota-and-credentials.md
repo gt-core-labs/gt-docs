@@ -1,7 +1,7 @@
 ---
 title: Quota y credenciales
 category: platform
-order: 8
+order: 9
 summary: Acceso a modelos entre cuentas, resolución de credenciales y rotación en caliente.
 ---
 

@@ -27,14 +27,18 @@ Comportamiento legacy: el orchd es dueño del dispatch. `FrontierSource →
 SchedWorker` slingea un polecat por bead, y un plugin de completion libera el slot
 cuando el bead aterriza.
 
-## Modo MAYOR — actual
+## Modo MAYOR
 
-El cluster corre **modo MAYOR** (`dispatchViaMayor: true`). El dispatcher agrupa el
+El dispatcher agrupa el
 frontier por prefijo de rig y despierta **un mayor por rig** (sesión tmux
 `mayor-<rig>`), entregándole el frontier de listos. El mayor coordina
 bead-por-bead y delega a polecats, y se anuncia como sesión observable.
 Wake-on-task: un frontier vacío no despierta a nadie (≈0 tokens en idle); un mayor
 que muere se re-slinga en el próximo tick si ese rig aún tiene trabajo.
+
+Desde el 2026-07-02 el cluster corre **DIRECT**: el eslabón de delegación del
+mayor todavía no materializa polecats end-to-end — ver la auditoría en
+[ciclo de trabajo de los agentes](/es/platform/agent-work-loop).
 
 ## Credenciales
 

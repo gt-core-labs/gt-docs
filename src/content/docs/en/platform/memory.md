@@ -1,7 +1,7 @@
 ---
 title: Memory
 category: platform
-order: 7
+order: 8
 summary: Durable knowledge the agents recall and save — kinds, recall, and hygiene.
 ---
 

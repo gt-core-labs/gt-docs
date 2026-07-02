@@ -1,7 +1,7 @@
 ---
 title: Quota & credentials
 category: platform
-order: 8
+order: 9
 summary: Model access across accounts, credential resolution, and hot rotation.
 ---
 

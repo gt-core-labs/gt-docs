@@ -1,7 +1,7 @@
 ---
 title: Agente a agente (A2A)
 category: platform
-order: 9
+order: 10
 summary: Cómo los agentes se descubren, delegan y se mensajean entre sí.
 ---
 

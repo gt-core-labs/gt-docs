@@ -26,14 +26,18 @@ flowchart LR
 Legacy behavior: the orchd owns dispatch. `FrontierSource → SchedWorker` slings a
 polecat per bead, and a completion plugin frees the slot when the bead lands.
 
-## MAYOR mode — current
+## MAYOR mode
 
-The cluster runs **MAYOR mode** (`dispatchViaMayor: true`). The dispatcher groups
+The dispatcher groups
 the frontier by rig prefix and wakes **one mayor per rig** (a tmux session
 `mayor-<rig>`), handing it the ready frontier. The mayor coordinates
 bead-by-bead and delegates to polecats, and announces itself as an observable
 session. Wake-on-task: an empty frontier wakes no one (≈0 idle tokens); a mayor
 that dies is re-slung on the next tick if that rig still has work.
+
+As of 2026-07-02 the cluster runs **DIRECT**: the mayor's delegation edge does
+not materialize polecats end-to-end yet — see the audit in
+[agent work loop](/platform/agent-work-loop).
 
 ## Credentials
 
