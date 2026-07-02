@@ -104,11 +104,15 @@ Ninguna dirección se reconcilia contra la verdad de git.
 
 ## Beads abiertos que cierran estos gaps
 
-`gtcore-088db9` (reconcile del board al boot del refinery — G5a),
-`gtcore-b69087` (restart de daemons / materialización del spawn — adyacente a
-G1/G6), `gtcore-efb7e6` (heartbeats de daemons — G6), más el reabierto
-`gtcore-4ad682` (merge_reset — G5b) y beads nuevos para el eslabón de
-delegación del mayor (G1) y el guard del cierre falso por ahead=0 (G5c).
+El epic `gtcore-9d8e6b` agrupa los bugs nuevos de la auditoría:
+`gtcore-d24661` (eslabón de delegación del mayor — G1, PR #164),
+`gtcore-03be6a` (gate de evidencia ahead=0 — G5c, PR #165) y
+`gtcore-f527f6` (retry del sling parqueado por cap — G2, PR #166). Ya
+trackeados aparte: `gtcore-088db9` (reconcile del board al boot del refinery
+— G5a), `gtcore-b69087` (restart de daemons — adyacente a G1/G6),
+`gtcore-efb7e6` (heartbeats de daemons — G6), `gtcore-f396dc` (diálogos del
+prompt del sling — G3), `gtcore-945c70` (guard de credenciales — G4), más el
+reabierto `gtcore-4ad682` (merge_reset — G5b).
 
 > **Áreas de mejora.** El problema más profundo es que el fallo es
 > *silencioso* en cada eslabón roto: un spawn que no materializa nada, un
